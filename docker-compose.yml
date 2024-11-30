@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  ollama:
+    container_name: ollama
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "ollama serve &
+      sleep 10 &&
+      ollama run falcon:40b-instruct"
